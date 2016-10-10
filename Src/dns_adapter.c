@@ -11,7 +11,7 @@ static uint32_t resolved_v4addr = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-static void dns_callback(const char *name, struct ip_addr *ipAddr, void *arg)
+static void dns_callback(const char *name, const ip_addr_t *ipAddr, void *arg)
 {
   NABTO_NOT_USED(arg);
 
@@ -21,7 +21,7 @@ static void dns_callback(const char *name, struct ip_addr *ipAddr, void *arg)
 
 void nabto_dns_resolve(const char* id)
 {
-  struct ip_addr resolvedIp;
+  ip_addr_t resolvedIp;
   switch (dns_gethostbyname(id, &resolvedIp, dns_callback, NULL)) {
   case ERR_OK:
     resolved_v4addr = ntohl(resolvedIp.addr);

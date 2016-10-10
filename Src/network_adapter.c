@@ -31,7 +31,7 @@ static struct Socket sockets[MAX_SOCKETS];
 static void udp_receive_callback(void*           arg,
                                  struct udp_pcb* pcb,
                                  struct pbuf*    buf,
-                                 struct ip_addr* addr,
+                                 const ip_addr_t* addr,
                                  u16_t           port)
 {
   NABTO_NOT_USED(pcb);
@@ -67,7 +67,7 @@ bool nabto_init_socket(uint32_t        localAddr,
 
   udp_recv(sockets[i].pcb, udp_receive_callback, &sockets[i]);
 
-  struct ip_addr ipAddr;
+  ip_addr_t ipAddr;
   ipAddr.addr = localAddr;
 
   if (udp_bind(sockets[i].pcb, (localAddr == 0) ? IP_ADDR_ANY : &ipAddr, *localPort) != ERR_OK)
@@ -129,7 +129,7 @@ ssize_t nabto_write(nabto_socket_t socket,
 {
   ssize_t res = -1;
   static struct pbuf *p = NULL;
-  struct ip_addr ipAddr;
+  ip_addr_t ipAddr;
 
   if (0 > socket || socket >= MAX_SOCKETS || buf == NULL || len == 0)
     return -1;

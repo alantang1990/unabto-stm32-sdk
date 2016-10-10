@@ -32,6 +32,7 @@
 #include "lwip/dhcp.h"
 #include "app_ethernet.h"
 #include "ethernetif.h"
+#include "nabto.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -83,9 +84,9 @@ void User_notification(struct netif *netif)
 void DHCP_thread(void const * argument)
 {
   struct netif *netif = (struct netif *) argument;
-  struct ip_addr ipaddr;
-  struct ip_addr netmask;
-  struct ip_addr gw;
+  ip_addr_t ipaddr;
+  ip_addr_t netmask;
+  ip_addr_t gw;
   uint32_t IPaddress;
   
   for (;;)

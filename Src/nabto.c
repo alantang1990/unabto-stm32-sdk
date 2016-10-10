@@ -6,7 +6,7 @@
 #include "lwip/arch.h"
 #include "lwip/api.h"
 #include "lwip/netif.h"
-#include "ipv4/lwip/ip_addr.h"
+#include "lwip/ip_addr.h"
 #include "string.h"
 #include "nabto.h"
 #include "cmsis_os.h"
@@ -36,7 +36,7 @@ int hctoi(const unsigned char h)
   * @param arg: pointer on argument(not used here)
   * @retval None
   */
-static void nabto_thread(void const *argument)
+static void nabto_thread(void *argument)
 {
   const char* nabtoId = "...";
   const char* presharedKey = "...";
@@ -125,6 +125,7 @@ application_event_result application_event(application_request* request,
     return AER_REQ_RESPONSE_READY;
   }
   }
+  return AER_REQ_INV_QUERY_ID;
 }
 
 /**

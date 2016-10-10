@@ -139,17 +139,17 @@ static void StartThread(void const * argument)
   */
 static void Netif_Config(void)
 {
-  struct ip_addr ipaddr;
-  struct ip_addr netmask;
-  struct ip_addr gw;
+  ip_addr_t ipaddr;
+  ip_addr_t netmask;
+  ip_addr_t gw;
   
   /* IP address setting */
   IP4_ADDR(&ipaddr, IP_ADDR0, IP_ADDR1, IP_ADDR2, IP_ADDR3);
   IP4_ADDR(&netmask, NETMASK_ADDR0, NETMASK_ADDR1 , NETMASK_ADDR2, NETMASK_ADDR3);
   IP4_ADDR(&gw, GW_ADDR0, GW_ADDR1, GW_ADDR2, GW_ADDR3);
   
-  /* - netif_add(struct netif *netif, struct ip_addr *ipaddr,
-  struct ip_addr *netmask, struct ip_addr *gw,
+  /* - netif_add(struct netif *netif, ip_addr_t *ipaddr,
+  ip_addr_t *netmask, ip_addr_t *gw,
   void *state, err_t (* init)(struct netif *netif),
   err_t (* input)(struct pbuf *p, struct netif *netif))
   

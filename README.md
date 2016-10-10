@@ -47,7 +47,7 @@ nabto-stm32-demo/
 
 ## How to use?
 
-1. Download the [STM32CubeF7][stm32cubef7] package and place it in the [`/STM32CubeF7`](/STM32CubeF7) folder.
+1. Download the [STM32CubeF7 (v1.4.0)][stm32cubef7] package and place it in the [`/STM32CubeF7`](/STM32CubeF7) folder.
 2. Import the project from [`/SW4STM32/NABTO_STM32`](/SW4STM32/NABTO_STM32) into your [System Workbench for STM32 (SW4STM32)][sw4stm32] workspace.
 3. Insert your Nabto ID and the preshared key from [developer.nabto.com](http://developer.nabto.com/) in [`/Src/nabto.c`](/Src/nabto.c). 
 4. Define `USE_DHCP` or specify static IP address in [`/Inc/main.h`](/Inc/main.h).
