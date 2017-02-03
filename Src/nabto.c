@@ -64,11 +64,11 @@ static void nabto_thread(void *argument)
   }
 }
 
-application_event_result application_event(application_request* request,
-                                           buffer_read_t* read_buffer,
-                                           buffer_write_t* write_buffer)
+application_event_result application_event(application_request* appreq,
+		                                   unabto_query_request* r_b,
+										   unabto_query_response* w_b)
 {
-  switch (request->queryId) {
+  switch (appreq->queryId) {
   case 1: {
     // <query name="light_write.json" description="Turn light on and off" id="1">
     // <request>
@@ -84,9 +84,9 @@ application_event_result application_event(application_request* request,
     uint8_t light_on;
 
     // Read parameters in request
-    if (!buffer_read_uint8(read_buffer, &light_id))
+    if (!unabto_query_read_uint8(r_b, &light_id))
       return AER_REQ_TOO_SMALL;
-    if (!buffer_read_uint8(read_buffer, &light_on))
+    if (!unabto_query_read_uint8(r_b, &light_on))
       return AER_REQ_TOO_SMALL;
 
     // Set display according to request
@@ -97,7 +97,7 @@ application_event_result application_event(application_request* request,
       BSP_LCD_DisplayOff();
 
     // Write back display state
-    if (!buffer_write_uint8(write_buffer, display_state))
+    if (!unabto_query_write_uint8(w_b, display_state))
       return AER_REQ_RSP_TOO_LARGE;
 
     return AER_REQ_RESPONSE_READY;
@@ -115,11 +115,11 @@ application_event_result application_event(application_request* request,
     uint8_t light_id;
 
     // Read parameters in request
-    if (!buffer_read_uint8(read_buffer, &light_id))
+    if (!unabto_query_read_uint8(r_b, &light_id))
       return AER_REQ_TOO_SMALL;
 
     // Write back led state
-    if (!buffer_write_uint8(write_buffer, display_state))
+    if (!unabto_query_write_uint8(w_b, display_state))
       return AER_REQ_RSP_TOO_LARGE;
 
     return AER_REQ_RESPONSE_READY;
