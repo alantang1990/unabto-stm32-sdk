@@ -47,13 +47,14 @@ nabto-stm32-demo/
 
 ## How to use?
 
-1. Download the [STM32CubeF7 (v1.4.0)][stm32cubef7] package and place it in the [`/STM32CubeF7`](/STM32CubeF7) folder.
-2. Import the project from [`/SW4STM32/NABTO_STM32`](/SW4STM32/NABTO_STM32) into your [System Workbench for STM32 (SW4STM32)][sw4stm32] workspace.
-3. Insert your Nabto ID and the preshared key from [developer.nabto.com](http://developer.nabto.com/) in [`/Src/nabto.c`](/Src/nabto.c). 
-4. Define `USE_DHCP` or specify static IP address in [`/Inc/main.h`](/Inc/main.h).
-5. Build project and transfer the image to the device memory.
-6. Connect the device to the ethernet.
-7. Run the demo and connect from your Nabto client. You should be able to switch the device's LCD display on and off.
+1. Clone this repository with `git clone --recursive https://github.com/nabto/unabto-stm32-sdk.git`
+2. Download the [STM32CubeF7 (v1.4.0)][stm32cubef7] package and place it in the [`/STM32CubeF7`](/STM32CubeF7) folder.
+3. Import the project from [`/SW4STM32/NABTO_STM32`](/SW4STM32/NABTO_STM32) into your [System Workbench for STM32 (SW4STM32)][sw4stm32] workspace.
+4. Insert your Nabto ID and the preshared key from [developer.nabto.com](http://developer.nabto.com/) in [`/Src/nabto.c`](/Src/nabto.c). 
+5. Define `USE_DHCP` or specify static IP address in [`/Inc/main.h`](/Inc/main.h).
+6. Build project and transfer the image to the device memory.
+7. Connect the device to the ethernet.
+8. Run the demo and connect from your Nabto client. You should be able to switch the device's LCD display on and off.
 
 [stm32cubef7]: http://www2.st.com/content/st_com/en/products/embedded-software/mcus-embedded-software/stm32-embedded-software/stm32cube-embedded-software/stm32cubef7.html
 [sw4stm32]: http://www.st.com/sw4stm32
