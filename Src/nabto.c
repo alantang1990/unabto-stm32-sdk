@@ -38,8 +38,8 @@ int hctoi(const unsigned char h)
   */
 static void nabto_thread(void *argument)
 {
-  const char* nabtoId = "...";
-  const char* presharedKey = "...";
+  const char* nabtoId = "<DEVICE ID>";
+  const char* presharedKey = "<KEY>";
 
   struct netif *netif = (struct netif *) argument;
 

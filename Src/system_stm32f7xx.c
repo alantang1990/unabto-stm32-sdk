@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    system_stm32f7xx.c
   * @author  MCD Application Team
-  * @version V1.0.2
-  * @date    18-November-2015 
+  * @version V1.2.0
+  * @date    30-December-2016
   * @brief   CMSIS Cortex-M7 Device Peripheral Access Layer System Source File.
   *
   *   This file provides two functions and one global variable to be called from 
@@ -24,7 +24,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2015 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -128,6 +128,7 @@
   uint32_t SystemCoreClock = 16000000;
   const uint8_t AHBPrescTable[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};
   const uint8_t APBPrescTable[8] = {0, 0, 0, 0, 1, 2, 3, 4};
+
 /**
   * @}
   */
@@ -306,16 +307,16 @@ void SystemInit_ExtMemCtl(void)
   GPIOC->PUPDR   = 0x00000040;
   
   /* Connect PDx pins to FMC Alternate function */
-  GPIOD->AFR[0]  = 0x0000C0CC;
+  GPIOD->AFR[0]  = 0x000000CC;
   GPIOD->AFR[1]  = 0xCC000CCC;
   /* Configure PDx pins in Alternate function mode */ 
-  GPIOD->MODER   = 0xA02A008A;
+  GPIOD->MODER   = 0xA02A000A;
   /* Configure PDx pins speed to 50 MHz */
-  GPIOD->OSPEEDR = 0xA02A008A;
+  GPIOD->OSPEEDR = 0xA02A000A;
   /* Configure PDx pins Output type to push-pull */
   GPIOD->OTYPER  = 0x00000000;
   /* No pull-up, pull-down for PDx pins */ 
-  GPIOD->PUPDR   = 0x50150045;
+  GPIOD->PUPDR   = 0x50150005;
   
   /* Connect PEx pins to FMC Alternate function */
   GPIOE->AFR[0]  = 0xC00000CC;
@@ -415,6 +416,13 @@ void SystemInit_ExtMemCtl(void)
   /* Disable write protection */
   tmpreg = FMC_Bank5_6->SDCR[0]; 
   FMC_Bank5_6->SDCR[0] = (tmpreg & 0xFFFFFDFF);
+  
+  /*
+   * Disable the FMC bank1 (enabled after reset).
+   * This, prevents CPU speculation access on this bank which blocks the use of FMC during
+   * 24us. During this time the others FMC master (such as LTDC) cannot use it!
+   */
+  FMC_Bank1->BTCR[0] = 0x000030d2;
 }
 #endif /* DATA_IN_ExtSDRAM */
 

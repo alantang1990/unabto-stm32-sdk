@@ -2,25 +2,45 @@
   ******************************************************************************
   * @file    Src/ethernetif.c
   * @author  MCD Application Team
-  * @version V1.0.2
-  * @date    18-November-2015 
+  * @version V1.2.0
+  * @date    30-December-2016
   * @brief   This file implements Ethernet network interface drivers for lwIP
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2015 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics International N.V. 
+  * All rights reserved.</center></h2>
   *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
+  * Redistribution and use in source and binary forms, with or without 
+  * modification, are permitted, provided that the following conditions are met:
   *
-  *        http://www.st.com/software_license_agreement_liberty_v2
+  * 1. Redistribution of source code must retain the above copyright notice, 
+  *    this list of conditions and the following disclaimer.
+  * 2. Redistributions in binary form must reproduce the above copyright notice,
+  *    this list of conditions and the following disclaimer in the documentation
+  *    and/or other materials provided with the distribution.
+  * 3. Neither the name of STMicroelectronics nor the names of other 
+  *    contributors to this software may be used to endorse or promote products 
+  *    derived from this software without specific written permission.
+  * 4. This software, including modifications and/or derivative works of this 
+  *    software, must execute solely and exclusively on microcontroller or
+  *    microprocessor devices manufactured by or for STMicroelectronics.
+  * 5. Redistribution and use of this software other than as permitted under 
+  *    this license is void and will automatically terminate your rights under 
+  *    this license. 
   *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+  * THIS SOFTWARE IS PROVIDED BY STMICROELECTRONICS AND CONTRIBUTORS "AS IS" 
+  * AND ANY EXPRESS, IMPLIED OR STATUTORY WARRANTIES, INCLUDING, BUT NOT 
+  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+  * PARTICULAR PURPOSE AND NON-INFRINGEMENT OF THIRD PARTY INTELLECTUAL PROPERTY
+  * RIGHTS ARE DISCLAIMED TO THE FULLEST EXTENT PERMITTED BY LAW. IN NO EVENT 
+  * SHALL STMICROELECTRONICS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+  * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, 
+  * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
+  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
+  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *
   ******************************************************************************
   */
@@ -28,7 +48,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal.h"
 #include "lwip/opt.h"
-#include "lwip/lwip_timers.h"
+#include "lwip/timeouts.h"
+#include "netif/ethernet.h"
 #include "netif/etharp.h"
 #include "ethernetif.h"
 #include <string.h>
@@ -36,7 +57,7 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* The time to block waiting for input. */
-#define TIME_WAITING_FOR_INPUT                 ( 100 )
+#define TIME_WAITING_FOR_INPUT                 ( osWaitForever )
 /* Stack size of the interface thread */
 #define INTERFACE_THREAD_STACK_SIZE            ( 350 )
 
@@ -47,31 +68,50 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 
-#if defined ( __ICCARM__ ) /*!< IAR Compiler */
+/*
+  @Note: The DMARxDscrTab and DMATxDscrTab must be declared in a non cacheable memory region
+         In this example they are declared in the first 256 Byte of SRAM1 memory, so this
+         memory region is configured by MPU as a device memory (please refer to MPU_Config() in main.c).
 
-#pragma location=0x2000E000
+         In this example the ETH buffers are located in the SRAM2 memory, 
+         since the data cache is enabled, so cache maintenance operations are mandatory.
+ */
+#if defined ( __CC_ARM   )
+ETH_DMADescTypeDef  DMARxDscrTab[ETH_RXBUFNB] __attribute__((at(0x20010000)));/* Ethernet Rx MA Descriptor */
+
+ETH_DMADescTypeDef  DMATxDscrTab[ETH_TXBUFNB] __attribute__((at(0x20010080)));/* Ethernet Tx DMA Descriptor */
+
+uint8_t Rx_Buff[ETH_RXBUFNB][ETH_RX_BUF_SIZE] __attribute__((at(0x2004C000))); /* Ethernet Receive Buffer */
+
+uint8_t Tx_Buff[ETH_TXBUFNB][ETH_TX_BUF_SIZE] __attribute__((at(0x2004D7D0))); /* Ethernet Transmit Buffer */
+
+#elif defined ( __ICCARM__ ) /*!< IAR Compiler */
+  #pragma data_alignment=4 
+
+#pragma location=0x20010000
 __no_init ETH_DMADescTypeDef  DMARxDscrTab[ETH_RXBUFNB];/* Ethernet Rx MA Descriptor */
-#pragma location=0x2000E100
+
+#pragma location=0x20010080
 __no_init ETH_DMADescTypeDef  DMATxDscrTab[ETH_TXBUFNB];/* Ethernet Tx DMA Descriptor */
-#elif defined ( __CC_ARM   )
-ETH_DMADescTypeDef  DMARxDscrTab[ETH_RXBUFNB] __attribute__((at(0x2000E000)));/* Ethernet Rx MA Descriptor */
-ETH_DMADescTypeDef  DMATxDscrTab[ETH_TXBUFNB] __attribute__((at(0x2000E100)));/* Ethernet Tx DMA Descriptor */
-#elif defined ( __GNUC__   )
-ETH_DMADescTypeDef  DMARxDscrTab[ETH_RXBUFNB] __attribute__((section(".RxDescripSection")));/* Ethernet Rx MA Descriptor */
-ETH_DMADescTypeDef  DMATxDscrTab[ETH_TXBUFNB] __attribute__((section(".TxDescripSection")));/* Ethernet Tx DMA Descriptor */
-#endif
-#if defined ( __ICCARM__ ) /*!< IAR Compiler */
-#pragma location=0x2000E200
+
+#pragma location=0x2004C000
 __no_init uint8_t Rx_Buff[ETH_RXBUFNB][ETH_RX_BUF_SIZE]; /* Ethernet Receive Buffer */
-#pragma location=0x2000FFC4
+
+#pragma location=0x2004D7D0
 __no_init uint8_t Tx_Buff[ETH_TXBUFNB][ETH_TX_BUF_SIZE]; /* Ethernet Transmit Buffer */
-#elif defined ( __CC_ARM   )
-uint8_t Rx_Buff[ETH_RXBUFNB][ETH_RX_BUF_SIZE] __attribute__((at(0x2000E200)));  /* Ethernet Receive Buffer */
-uint8_t Tx_Buff[ETH_TXBUFNB][ETH_TX_BUF_SIZE]  __attribute__((at(0x2000FFC4))); /* Ethernet Transmit Buffer */
-#elif defined ( __GNUC__   )
-uint8_t Rx_Buff[ETH_RXBUFNB][ETH_RX_BUF_SIZE] __attribute__((section(".RxBUF")));/* Ethernet Receive Buffer */
-uint8_t Tx_Buff[ETH_TXBUFNB][ETH_TX_BUF_SIZE] __attribute__((section(".TxBUF")));/* Ethernet Transmit Buffer */
+
+#elif defined ( __GNUC__ ) /*!< GNU Compiler */
+
+ETH_DMADescTypeDef  DMARxDscrTab[ETH_RXBUFNB] __attribute__((section(".RxDecripSection")));/* Ethernet Rx MA Descriptor */
+
+ETH_DMADescTypeDef  DMATxDscrTab[ETH_TXBUFNB] __attribute__((section(".TxDescripSection")));/* Ethernet Tx DMA Descriptor */
+
+uint8_t Rx_Buff[ETH_RXBUFNB][ETH_RX_BUF_SIZE] __attribute__((section(".RxarraySection"))); /* Ethernet Receive Buffer */
+
+uint8_t Tx_Buff[ETH_TXBUFNB][ETH_TX_BUF_SIZE] __attribute__((section(".TxarraySection"))); /* Ethernet Transmit Buffer */
+
 #endif
+
 /* Semaphore to signal incoming packets */
 osSemaphoreId s_xSemaphore = NULL;
 
@@ -145,16 +185,6 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
 void HAL_ETH_RxCpltCallback(ETH_HandleTypeDef *heth)
 {
   osSemaphoreRelease(s_xSemaphore);
-}
-
-/**
-  * @brief  Ethernet IRQ Handler
-  * @param  None
-  * @retval None
-  */
-void ETHERNET_IRQHandler(void)
-{
-  HAL_ETH_IRQHandler(&EthHandle);
 }
 
 /*******************************************************************************
@@ -296,7 +326,9 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
     bufferoffset = bufferoffset + byteslefttocopy;
     framelength = framelength + byteslefttocopy;
   }
-  
+
+  /* Clean and Invalidate data cache */
+  SCB_CleanInvalidateDCache();  
   /* Prepare transmit descriptors to give to DMA */ 
   HAL_ETH_TransmitFrame(&EthHandle, framelength);
   
@@ -348,6 +380,9 @@ static struct pbuf * low_level_input(struct netif *netif)
     /* We allocate a pbuf chain of pbufs from the Lwip buffer pool */
     p = pbuf_alloc(PBUF_RAW, len, PBUF_POOL);
   }
+  
+  /* Clean and Invalidate data cache */
+  SCB_CleanInvalidateDCache();
   
   if (p != NULL)
   {
@@ -461,6 +496,10 @@ err_t ethernetif_init(struct netif *netif)
   netif->name[0] = IFNAME0;
   netif->name[1] = IFNAME1;
 
+  /* We directly use etharp_output() here to save a function call.
+   * You can instead declare your own function an call etharp_output()
+   * from it if you have to do some checks before sending (e.g. if link
+   * is available...) */
   netif->output = etharp_output;
   netif->linkoutput = low_level_output;
 
@@ -470,4 +509,14 @@ err_t ethernetif_init(struct netif *netif)
   return ERR_OK;
 }
 
+/**
+  * @brief  Returns the current time in milliseconds
+  *         when LWIP_TIMERS == 1 and NO_SYS == 1
+  * @param  None
+  * @retval Time
+  */
+u32_t sys_now(void)
+{
+  return HAL_GetTick();
+}
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

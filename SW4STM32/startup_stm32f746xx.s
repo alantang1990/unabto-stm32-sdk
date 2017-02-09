@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file      startup_stm32f746xx.s
   * @author    MCD Application Team
-  * Version    V1.0.2
-  * Date       18-November-2015
+  * @version   V1.2.0
+  * @date      30-December-2016
   * @brief     STM32F746xx Devices vector table for GCC based toolchain. 
   *            This module performs:
   *                - Set the initial SP
@@ -16,7 +16,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2015 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2016 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -587,5 +587,5 @@ g_pfnVectors:
    .weak      SPDIF_RX_IRQHandler            
    .thumb_set SPDIF_RX_IRQHandler,Default_Handler 
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/		
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/        
  

@@ -9,7 +9,4 @@
 /* Exported types ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 err_t ethernetif_init(struct netif *netif);
-void ETHERNET_IRQHandler(void);
-u32_t sys_now(void);
-
 #endif

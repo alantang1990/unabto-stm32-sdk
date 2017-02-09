@@ -9,52 +9,57 @@ This demo shows the usage of the [Nabto](http://www.nabto.com/) platform in comb
 ```
 nabto-stm32-demo/
 ├──Inc/
-│  ├── app_ethernet.h             header of app_ethernet.c file
-│  ├── ethernetif.h               header for ethernetif.c file
-│  ├── FreeRTOSConfig.h           FreeRTOS configuration options
-│  ├── lcd_log_conf.h             LCD Log configuration file
-│  ├── lwipopts.h                 LwIP stack configuration options
-│  ├── main.h                     Main program header file
-│  ├── nabto.h                    header of nabto.c file
-│  ├── stm32f7xx_hal_conf.h       HAL configuration file
-│  ├── stm32f7xx_it.h             STM32 interrupt handlers header file
-│  ├── unabto_config.h            uNabto configuration
-│  ├── unabto_platform.h          Defines platofrm specific dependencies
-│  └── unabto_platform_types.h    Defines platofrm specific types needed by uNabto
+│  ├── app_ethernet.h               header of app_ethernet.c file
+│  ├── ethernetif.h                 header for ethernetif.c file
+│  ├── FreeRTOSConfig.h             FreeRTOS configuration options
+│  ├── lcd_log_conf.h               LCD Log configuration file
+│  ├── lwipopts.h                   LwIP stack configuration options
+│  ├── main.h                       Main program header file
+│  ├── nabto.h                      header of nabto.c file
+│  ├── stm32f7xx_hal_conf.h         HAL configuration file
+│  ├── stm32f7xx_it.h               STM32 interrupt handlers header file
+│  ├── unabto_config.h              uNabto configuration
+│  ├── unabto_platform.h            Defines platofrm specific dependencies
+│  └── unabto_platform_types.h      Defines platofrm specific types needed by uNabto
 │
 ├──Src/
-│  ├──app_ethernet.c              Ethernet specific module
-│  ├──dns_adapter.c               Nabto DNS adapter implementation
-│  ├──ethernetif.c                Interfacing LwIP to ETH driver
-│  ├──log_adapter.c               Nabto log adapter implementation
-│  ├──main.c                      Main program
-│  ├──nabto.c                     Nabto main thread
-│  ├──network_adapter.c           Nabto network adapter implementation
-│  ├──random_adapter.c            Nabto random adapter implementation
-│  ├──stm32f7xx_it.c              STM32 interrupt handlers
-│  ├──system_stm32f7xx.c          STM32F7xx system clock configuration file
-│  └──time_adapter.c              Nabto time adapter implementation
+│  ├──app_ethernet.c                Ethernet specific module
+│  ├──dns_adapter.c                 Nabto DNS adapter implementation
+│  ├──ethernetif.c                  Interfacing LwIP to ETH driver
+│  ├──log_adapter.c                 Nabto log adapter implementation
+│  ├──main.c                        Main program
+│  ├──nabto.c                       Nabto main thread
+│  ├──network_adapter.c             Nabto network adapter implementation
+│  ├──random_adapter.c              Nabto random adapter implementation
+│  ├──stm32f7xx_hal_timebase_tim.c  HAL time
+│  ├──stm32f7xx_it.c                STM32 interrupt handlers
+│  ├──system_stm32f7xx.c            STM32F7xx system clock configuration file
+│  └──time_adapter.c                Nabto time adapter implementation
 │
-├── STM32CubeF7/                  Folder for STM32CubeF7
-├── SW4STM32/                     System Workbench for STM32 (SW4STM32) project
-└── unabto/                       uNabto server
+├── STM32CubeF7/                    Folder for STM32CubeF7
+│  ├──Documentation
+│  ├──Drivers
+│  ├──[...]
+│  └──README.md
+│
+├── SW4STM32/                       System Workbench for STM32 (SW4STM32) project
+└── unabto/                         uNabto server
 ```
   
 ## Hardware and Software environment
 
 - This demo runs on STM32F746xx devices.
-- The demo has been compiled with the [System Workbench for STM32 (SW4STM32)][sw4stm32] and tested on a STM32746G&#x2011;DISCO board
+- The demo has been compiled with the [System Workbench for STM32 _(SW4STM32)_ (v1.13.1)][sw4stm32] and tested on a STM32746G&#x2011;DISCO board
 
 ## How to use?
 
 1. Clone this repository with `git clone --recursive https://github.com/nabto/unabto-stm32-sdk.git`
-2. Download the [STM32CubeF7 (v1.4.0)][stm32cubef7] package and place it in the [`/STM32CubeF7`](/STM32CubeF7) folder.
-3. Import the project from [`/SW4STM32/NABTO_STM32`](/SW4STM32/NABTO_STM32) into your [System Workbench for STM32 (SW4STM32)][sw4stm32] workspace.
+2. Download the [STM32CubeF7 (v1.6.0)][stm32cubef7] package and place it in the [`/STM32CubeF7`](/STM32CubeF7) folder.
+3. Import the project from [`/SW4STM32/NABTO_STM32`](/SW4STM32/NABTO_STM32) into your [System Workbench for STM32 _(SW4STM32)_][sw4stm32] workspace.
 4. Insert your Nabto ID and the preshared key from [developer.nabto.com](http://developer.nabto.com/) in [`/Src/nabto.c`](/Src/nabto.c). 
-5. Define `USE_DHCP` or specify static IP address in [`/Inc/main.h`](/Inc/main.h).
-6. Build project and transfer the image to the device memory.
-7. Connect the device to the ethernet.
-8. Run the demo and connect from your Nabto client. You should be able to switch the device's LCD display on and off.
+5. Build project and transfer the image to the device memory.
+6. Connect the device to the ethernet.
+7. Run the demo and connect from your Nabto client. You should be able to switch the device's LCD display on and off.
 
 [stm32cubef7]: http://www2.st.com/content/st_com/en/products/embedded-software/mcus-embedded-software/stm32-embedded-software/stm32cube-embedded-software/stm32cubef7.html
 [sw4stm32]: http://www.st.com/sw4stm32

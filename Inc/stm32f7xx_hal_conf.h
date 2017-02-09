@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f7xx_hal_conf.h
   * @author  MCD Application Team
-  * @version V1.0.3
-  * @date    22-April-2016
+  * @version V1.2.0
+  * @date    30-December-2016
   * @brief   HAL configuration file.
   ******************************************************************************
   * @attention
@@ -82,7 +82,7 @@
 /* #define HAL_SD_MODULE_ENABLED */  
 /* #define HAL_SPDIFRX_MODULE_ENABLED */
 /* #define HAL_SPI_MODULE_ENABLED */   
-/* #define HAL_TIM_MODULE_ENABLED */   
+#define HAL_TIM_MODULE_ENABLED
 #define HAL_UART_MODULE_ENABLED 
 /* #define HAL_USART_MODULE_ENABLED */
 /* #define HAL_IRDA_MODULE_ENABLED  */
@@ -185,8 +185,8 @@
 /* Definition of the Ethernet driver buffers size and count */   
 #define ETH_RX_BUF_SIZE                ETH_MAX_PACKET_SIZE /* buffer size for receive               */
 #define ETH_TX_BUF_SIZE                ETH_MAX_PACKET_SIZE /* buffer size for transmit              */
-#define ETH_RXBUFNB                    ((uint32_t)5U)       /* 5 Rx buffers of size ETH_RX_BUF_SIZE  */
-#define ETH_TXBUFNB                    ((uint32_t)5U)       /* 5 Tx buffers of size ETH_TX_BUF_SIZE  */
+#define ETH_RXBUFNB                    ((uint32_t)4U)       /* 4 Rx buffers of size ETH_RX_BUF_SIZE  */
+#define ETH_TXBUFNB                    ((uint32_t)4U)       /* 4 Tx buffers of size ETH_TX_BUF_SIZE  */
 
 /* Section 2: PHY configuration section */
 /* LAN8742A PHY Address*/
