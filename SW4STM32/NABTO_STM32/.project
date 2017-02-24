@@ -91,6 +91,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Src/time_adapter.c</locationURI>
 		</link>
 		<link>
+			<name>Application/User/unabto_application.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/unabto_application.c</locationURI>
+		</link>
+		<link>
 			<name>Application/User/unabto_main.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Src/unabto_main.c</locationURI>
@@ -411,6 +416,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Middlewares/Nabto/modules/fingerprint_acl</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/Nabto/modules/util</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -589,6 +599,26 @@
 			<name>Middlewares/Nabto/modules/crypto/generic</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/Nabto/modules/fingerprint_acl/fp_acl.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/unabto/src/modules/fingerprint_acl/fp_acl.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/Nabto/modules/fingerprint_acl/fp_acl_ae.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/unabto/src/modules/fingerprint_acl/fp_acl_ae.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/Nabto/modules/fingerprint_acl/fp_acl_file.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/unabto/src/modules/fingerprint_acl/fp_acl_file.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/Nabto/modules/fingerprint_acl/fp_acl_memory.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/unabto/src/modules/fingerprint_acl/fp_acl_memory.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/Nabto/modules/util/read_hex.c</name>
