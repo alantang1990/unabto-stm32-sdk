@@ -84,9 +84,9 @@ void demo_application_set_device_icon_(const char* icon) {
 
 void demo_application_tick() {
     // Simulate room temperature converging to target temperature
-    static uint32_t time_last_update_ = 0;
-    uint32_t now = nabtoGetStamp();
-    if (now - time_last_update_ > 2000) {
+    static nabto_stamp_t time_last_update_;
+    nabto_stamp_t now = nabtoGetStamp();
+    if (nabtoStampDiff2ms(nabtoStampDiff(&now, &time_last_update_)) > 2000) {
         if (heatpump_room_temperature_ < heatpump_target_temperature_) {
             heatpump_room_temperature_++;
         } else if (heatpump_room_temperature_ > heatpump_target_temperature_) {
