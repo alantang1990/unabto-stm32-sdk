@@ -35,6 +35,7 @@ static void unabto_thread()
   const char* device_id = "<DEVICE ID>";
   const char* pre_shared_key = "<KEY>";
 
+  // Init uNabto
   nabto_main_setup* nms = unabto_init_context();
   nms->id = strdup(device_id);
 
@@ -51,8 +52,13 @@ static void unabto_thread()
     NABTO_LOG_FATAL(("Failed at nabto_main_init"));
   }
 
+  // Init demo application
   demo_init();
+  demo_application_set_device_name("STM32F746G-DISCO");
+  demo_application_set_device_product("ACME 9002 Heatpump");
+  demo_application_set_device_icon_("img/chip-small.png");
 
+  // Main loop
   for (;;) {
     unabto_tick();
     osDelay(10);
