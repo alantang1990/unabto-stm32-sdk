@@ -54,7 +54,7 @@
 #include "lwip/netif.h"
 #include "lwip/tcpip.h"
 #include "app_ethernet.h"
-#include "nabto.h"
+#include "unabto_main.h"
 #include "lcd_log.h"
 
 /* Private typedef -----------------------------------------------------------*/
@@ -138,8 +138,8 @@ static void StartThread(void const * argument)
   osThreadDef(DHCP, DHCP_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE * 2);
   osThreadCreate (osThread(DHCP), &gnetif);
 #else
-  /* Initialize nabto */
-  nabto_init(&gnetif);
+  /* Start uNabto */
+  unabto_start();
 #endif
 
   for( ;; )

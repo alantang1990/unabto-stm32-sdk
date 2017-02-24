@@ -52,7 +52,7 @@
 #include "app_ethernet.h"
 #include "ethernetif.h"
 #include "lcd_log.h"
-#include "nabto.h"
+#include "unabto_main.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -131,8 +131,8 @@ void DHCP_thread(void const * argument)
          
           sprintf((char *)iptxt, "%s", ip4addr_ntoa((const ip4_addr_t *)&netif->ip_addr));   
           LCD_UsrLog ("IP address assigned by a DHCP server: %s\n", iptxt);
-          /* Initialize nabto */
-          nabto_init(netif);
+          /* Start uNabto */
+          unabto_start();
         }
         else
         {

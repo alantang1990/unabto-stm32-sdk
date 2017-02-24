@@ -66,11 +66,6 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Src/main.c</locationURI>
 		</link>
 		<link>
-			<name>Application/User/nabto.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Src/nabto.c</locationURI>
-		</link>
-		<link>
 			<name>Application/User/network_adapter.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Src/network_adapter.c</locationURI>
@@ -94,6 +89,11 @@
 			<name>Application/User/time_adapter.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Src/time_adapter.c</locationURI>
+		</link>
+		<link>
+			<name>Application/User/unabto_main.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/unabto_main.c</locationURI>
 		</link>
 		<link>
 			<name>Application/Utilities/lcd_log.c</name>
@@ -411,9 +411,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/Nabto/modules/read_hex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/unabto/src/modules/util/read_hex.c</locationURI>
+			<name>Middlewares/Nabto/modules/util</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/Nabto/unabto/unabto_aes128_sha256.c</name>
@@ -589,6 +589,11 @@
 			<name>Middlewares/Nabto/modules/crypto/generic</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/Nabto/modules/util/read_hex.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/unabto/src/modules/util/read_hex.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/Nabto/unabto/util/unabto_buffer.c</name>

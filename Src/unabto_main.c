@@ -8,10 +8,10 @@
 #include "lwip/netif.h"
 #include "lwip/ip_addr.h"
 #include "string.h"
-#include "read_hex.h"
-#include "nabto.h"
+#include <modules/util/read_hex.h>
+#include "unabto_main.h"
 #include "cmsis_os.h"
-#include "main.h"
+#include "unabto_main.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -25,14 +25,14 @@ uint8_t display_state = 1;
 /* Private functions ---------------------------------------------------------*/
 
 /**
-  * @brief  nabto server thread
-  * @param arg: pointer on argument(not used here)
+  * @brief  uNabto server thread
+  * @param arg: None
   * @retval None
   */
-static void nabto_thread(void *argument)
+static void unabto_thread()
 {
-  const char* nabtoId = "<DEVICE ID>";
-  const char* presharedKey = "<KEY>";
+  const char* device_id = "<DEVICE ID>";
+  const char* pre_shared_key = "<KEY>";
 
   nabto_main_setup* nms = unabto_init_context();
   nms->id = strdup(device_id);
@@ -121,12 +121,12 @@ application_event_result application_event(application_request* appreq,
 }
 
 /**
-  * @brief  Initialize the UDP server (start its thread)
+  * @brief  Start the uNabto server
   * @param  none
   * @retval None
   */
-void nabto_init(struct netif *netif)
+void unabto_start()
 {
-  sys_thread_new("Nabto", nabto_thread, netif, DEFAULT_THREAD_STACKSIZE, NABTO_THREAD_PRIO);
+  sys_thread_new("uNabto", unabto_thread, NULL, DEFAULT_THREAD_STACKSIZE, NABTO_THREAD_PRIO);
 }
 
