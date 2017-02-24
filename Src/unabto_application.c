@@ -4,10 +4,11 @@
 
 #include "unabto/unabto_app.h"
 #include <stdio.h>
-#include <time.h>
 #include <modules/fingerprint_acl/fp_acl_ae.h>
 #include <modules/fingerprint_acl/fp_acl_memory.h>
 #include <modules/fingerprint_acl/fp_acl_file.h>
+#include "stm32746g_discovery_lcd.h"
+#include "lcd_log.h"
 
 typedef enum { HPM_COOL = 0,
                HPM_HEAT = 1,
@@ -82,10 +83,10 @@ void demo_application_set_device_icon_(const char* icon) {
 }
 
 void demo_application_tick() {
-#ifndef WIN32
-    static time_t time_last_update_ = 0;
-    time_t now = time(0);
-    if (now - time_last_update_ > 2) {
+    // Simulate room temperature converging to target temperature
+    static uint32_t time_last_update_ = 0;
+    uint32_t now = nabtoGetStamp();
+    if (now - time_last_update_ > 2000) {
         if (heatpump_room_temperature_ < heatpump_target_temperature_) {
             heatpump_room_temperature_++;
         } else if (heatpump_room_temperature_ > heatpump_target_temperature_) {
@@ -93,10 +94,27 @@ void demo_application_tick() {
         }
         time_last_update_ = now;
     }
-#else
-    size_t ticks_ = 0;
-    heatpump_room_temperature_ = heatpump_target_temperature_ + ticks++ % 2;
-#endif
+
+    // Turn off display if heat pump is powered off
+    if (heatpump_state_) {
+        BSP_LCD_DisplayOn();
+    } else {
+        BSP_LCD_DisplayOff();
+    }
+
+    // Display heat pump parameters in footer
+    const char * modeStrings[] = { "Cool", "Heat", "Circulate", "Dehumidify" };
+    char status_str[80];
+    sprintf(status_str, "Target Temp: %li | Room Temp: %li | Mode: %s",
+            heatpump_target_temperature_,
+            heatpump_room_temperature_,
+            modeStrings[heatpump_mode_]);
+
+    static char last_status_str[80];
+    if(strcmp(status_str, last_status_str) != 0) {
+        LCD_LOG_SetFooter((uint8_t*)status_str);
+        strcpy(last_status_str, status_str);
+    }
 }
 
 int copy_buffer(unabto_query_request* read_buffer, uint8_t* dest, uint16_t bufSize, uint16_t* len) {
@@ -155,7 +173,6 @@ application_event_result application_event(application_request* request,
         if (!unabto_query_write_uint8(query_response, fp_acl_is_pair_allowed(request))) return AER_REQ_RSP_TOO_LARGE;
         if (!unabto_query_write_uint8(query_response, fp_acl_is_user_paired(request))) return AER_REQ_RSP_TOO_LARGE; 
         if (!unabto_query_write_uint8(query_response, fp_acl_is_user_owner(request))) return AER_REQ_RSP_TOO_LARGE;
-
         return AER_REQ_RESPONSE_READY;
 
     case 10010:
