@@ -8,6 +8,7 @@
 #include "lwip/netif.h"
 #include "lwip/ip_addr.h"
 #include "string.h"
+#include "read_hex.h"
 #include "nabto.h"
 #include "cmsis_os.h"
 #include "main.h"
@@ -23,14 +24,6 @@ uint8_t display_state = 1;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
-int hctoi(const unsigned char h)
-{
-  if (isdigit(h))
-    return h - '0';
-  else
-    return toupper(h) - 'A' + 10;
-}
-
 /**
   * @brief  nabto server thread
   * @param arg: pointer on argument(not used here)
@@ -41,22 +34,21 @@ static void nabto_thread(void *argument)
   const char* nabtoId = "<DEVICE ID>";
   const char* presharedKey = "<KEY>";
 
-  struct netif *netif = (struct netif *) argument;
-
-  // Initialize Nabto
   nabto_main_setup* nms = unabto_init_context();
-  nms->ipAddress = netif->ip_addr.addr;
-  nms->id = nabtoId;
-  nms->secureAttach = 1;
-  nms->secureData = 1;
+  nms->id = strdup(device_id);
+
+  nms->secureAttach = true;
+  nms->secureData = true;
   nms->cryptoSuite = CRYPT_W_AES_CBC_HMAC_SHA256;
 
-  const char *p;
-  unsigned char *up;
-  for (p = presharedKey, up = nms->presharedKey; *p; p += 2, ++up)
-    *up = hctoi(p[0]) * 16 + hctoi(p[1]); // convert hex string to byte array
+  if (!unabto_read_psk_from_hex(pre_shared_key, nms->presharedKey, 16)) {
+    NABTO_LOG_ERROR(("Invalid cryptographic key specified", pre_shared_key));
+    return;
+  }
 
-  unabto_init();
+  if (!unabto_init()) {
+    NABTO_LOG_FATAL(("Failed at nabto_main_init"));
+  }
 
   for (;;) {
     osDelay(10);

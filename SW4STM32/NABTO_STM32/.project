@@ -411,6 +411,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Middlewares/Nabto/modules/read_hex.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/unabto/src/modules/util/read_hex.c</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/Nabto/unabto/unabto_aes128_sha256.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/unabto/src/unabto/unabto_aes128_sha256.c</locationURI>
