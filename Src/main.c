@@ -97,7 +97,10 @@ int main(void)
   
   /* Configure the system clock to 200 MHz */
   SystemClock_Config(); 
-  
+
+  /* Configure LED1 */
+  BSP_LED_Init(LED1);
+
   /* Init thread */
 #if defined(__GNUC__)
   osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 5);
@@ -284,6 +287,9 @@ static void Error_Handler(void)
   /* User may add here some code to deal with this error */
   while(1)
   {
+    /* Toggle LED1 fast */
+    BSP_LED_Toggle(LED1);
+    HAL_Delay(40);
   }
 }
 
