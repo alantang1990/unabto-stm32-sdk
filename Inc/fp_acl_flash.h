@@ -45,6 +45,8 @@ fp_acl_db_status fp_acl_flash_save(struct fp_mem_state* acl);
 
 fp_acl_db_status fp_acl_flash_load(struct fp_mem_state* acl);
 
+fp_acl_db_status fp_acl_flash_erase();
+
 /**
  * Inititalize the flash persisting backend.
  */

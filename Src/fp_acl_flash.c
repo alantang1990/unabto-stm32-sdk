@@ -122,22 +122,10 @@ fp_acl_db_status fp_acl_flash_save(struct fp_mem_state* acl)
 		}
 	}
 
-    HAL_FLASH_Unlock();
-
-    EraseInitStruct.TypeErase     = FLASH_TYPEERASE_SECTORS;
-    EraseInitStruct.VoltageRange  = FLASH_VOLTAGE_RANGE_3;
-    EraseInitStruct.Sector        = get_flash_sector(flash_start_addr);
-    EraseInitStruct.NbSectors     = get_flash_sector(flash_end_addr) - EraseInitStruct.Sector + 1;
-
-    /* Note: If an erase operation in Flash memory also concerns data in the data or instruction cache,
-             you have to make sure that these data are rewritten before they are accessed during code
-             execution. If this cannot be done safely, it is recommended to flush the caches by setting the
-             DCRST and ICRST bits in the FLASH_CR register. */
-    uint32_t SECTORError = 0;
-    if (HAL_FLASHEx_Erase(&EraseInitStruct, &SECTORError) != HAL_OK)
-    {
-    	 return FP_ACL_DB_SAVE_FAILED;
-    }
+	if(fp_acl_flash_erase() != FP_ACL_DB_OK)
+	{
+		return FP_ACL_DB_SAVE_FAILED;
+	}
 
     WRITE_FORWARD_U32(ptr, FP_ACL_FILE_VERSION);
 	WRITE_FORWARD_U32(ptr, acl->settings.systemPermissions);
@@ -145,11 +133,16 @@ fp_acl_db_status fp_acl_flash_save(struct fp_mem_state* acl)
 	WRITE_FORWARD_U32(ptr, acl->settings.firstUserPermissions);
 	WRITE_FORWARD_U32(ptr, users);
 
+	HAL_FLASH_Unlock();
+
 	for(size_t i = 0; i < 20; ++i)
 	{
 		byte = buffer[i];
 		if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_BYTE, flash_addr++, byte) != HAL_OK)
+		{
+			HAL_FLASH_Lock();
 			return FP_ACL_DB_SAVE_FAILED;
+		}
 	}
 
 	// write user records
@@ -164,7 +157,10 @@ fp_acl_db_status fp_acl_flash_save(struct fp_mem_state* acl)
 			{
 				byte = buffer[i];
 				if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_BYTE, flash_addr++, byte) != HAL_OK)
+				{
+					HAL_FLASH_Lock();
 					return FP_ACL_DB_SAVE_FAILED;
+				}
 			}
 		}
 	}
@@ -172,6 +168,31 @@ fp_acl_db_status fp_acl_flash_save(struct fp_mem_state* acl)
 	HAL_FLASH_Lock();
 
 	return FP_ACL_DB_OK;
+}
+
+fp_acl_db_status fp_acl_flash_erase()
+{
+	fp_acl_db_status status = FP_ACL_DB_OK;
+
+	HAL_FLASH_Unlock();
+
+	EraseInitStruct.TypeErase     = FLASH_TYPEERASE_SECTORS;
+	EraseInitStruct.VoltageRange  = FLASH_VOLTAGE_RANGE_3;
+	EraseInitStruct.Sector        = get_flash_sector(flash_start_addr);
+	EraseInitStruct.NbSectors     = get_flash_sector(flash_end_addr) - EraseInitStruct.Sector + 1;
+
+	/* Note: If an erase operation in Flash memory also concerns data in the data or instruction cache,
+			 you have to make sure that these data are rewritten before they are accessed during code
+			 execution. If this cannot be done safely, it is recommended to flush the caches by setting the
+			 DCRST and ICRST bits in the FLASH_CR register. */
+	uint32_t SECTORError = 0;
+	if (HAL_FLASHEx_Erase(&EraseInitStruct, &SECTORError) != HAL_OK)
+	{
+		status = FP_ACL_DB_SAVE_FAILED;
+	}
+
+	HAL_FLASH_Lock();
+	return status;
 }
 
 fp_acl_db_status fp_acl_flash_init(uint32_t start_addr, uint32_t end_addr, struct fp_mem_persistence* p)
