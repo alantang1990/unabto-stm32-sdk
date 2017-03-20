@@ -2,7 +2,7 @@
 
 ## Description
 
-This demo shows how to create a simple [AppMyProduct](http://www.appmyproduct.com/) application for a STM32 MCU using the STM32Cube embedded software libraries including FreeRTOS and the LwIP TCP/IP stack. The device can be controlled by the [Heat Control Ionic](https://github.com/nabto/ionic-starter-nabto) starter app. Also check out the article about this demo on [blog.nabto.com](https://blog.nabto.com/2016/04/24/nabto-freertos-running-on-cortex-m7-using-the-st-stm32f746g-disco-board/).
+This demo shows how to create a simple [AppMyProduct](http://www.appmyproduct.com/) application for a STM32 MCU using the STM32Cube embedded software libraries including FreeRTOS and the LwIP TCP/IP stack. The device can be controlled by the [Heat Control Ionic](https://github.com/nabto/ionic-starter-nabto) starter app. Also check out the article about this demo on [blog.nabto.com](https://blog.nabto.com/2017/03/20/stm32f746g-disco-board-with-freertos-appmyproduct/).
 
 ## Directory contents
 
