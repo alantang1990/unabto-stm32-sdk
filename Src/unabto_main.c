@@ -21,6 +21,7 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 uint8_t display_state = 1;
+bool do_factory_reset = false;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -53,7 +54,7 @@ static void unabto_thread()
   }
 
   // Init demo application
-  demo_init();
+  demo_init(do_factory_reset);
   demo_application_set_device_name("STM32F746G-DISCO");
   demo_application_set_device_product("ACME 9002 Heatpump");
   demo_application_set_device_icon_("img/chip-small.png");
@@ -68,11 +69,22 @@ static void unabto_thread()
 
 /**
   * @brief  Start the uNabto server
-  * @param  none
+  * @param  None
   * @retval None
   */
 void unabto_start()
 {
   sys_thread_new("uNabto", unabto_thread, NULL, DEFAULT_THREAD_STACKSIZE, NABTO_THREAD_PRIO);
+}
+
+/**
+  * @brief  Reset all AppMyProduct settings to factory default when
+  *         unabto thread is started.
+  * @param  None
+  * @retval None
+  */
+void unabto_do_factory_reset()
+{
+  do_factory_reset = true;
 }
 

@@ -52,7 +52,7 @@ void debug_dump_acl() {
     }
 }
 
-void demo_init() {
+void demo_init(bool factory_reset) {
     struct fp_acl_settings default_settings;
     default_settings.systemPermissions =
         FP_ACL_SYSTEM_PERMISSION_PAIRING |
@@ -67,6 +67,9 @@ void demo_init() {
     if (fp_acl_flash_init(ADDR_FLASH_START, ADDR_FLASH_END, &fp_file_) != FP_ACL_DB_OK) {
         NABTO_LOG_ERROR(("cannot load acl from flash"));
         exit(1);
+    }
+    if(factory_reset) {
+    	fp_acl_flash_erase();
     }
     fp_mem_init(&db_, &default_settings, &fp_file_);
     fp_acl_ae_init(&db_);

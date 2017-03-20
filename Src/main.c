@@ -101,6 +101,9 @@ int main(void)
   /* Configure LED1 */
   BSP_LED_Init(LED1);
 
+  /* Configure User button */
+  BSP_PB_Init(BUTTON_KEY, BUTTON_MODE_GPIO);
+
   /* Init thread */
 #if defined(__GNUC__)
   osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 5);
@@ -127,6 +130,14 @@ static void StartThread(void const * argument)
   /* Initialize LCD */
   BSP_Config();
   
+  /* Factory reset Nabto settings if User button is pressed on startup. */
+  if(BSP_PB_GetState(BUTTON_KEY)) {
+	LCD_UsrLog ((char *)"FACTORY RESET\n");
+    unabto_do_factory_reset();
+  }
+
+  LCD_UsrLog ((char *)"  State: Ethernet Initialization ...\n");
+
   /* Create tcp_ip stack thread */
   tcpip_init(NULL, NULL);
   
@@ -214,8 +225,6 @@ static void BSP_Config(void)
   /* Show Header and Footer texts */
   LCD_LOG_SetHeader((uint8_t *)"Nabto STM32 FreeRTOS Demo");
   LCD_LOG_SetFooter((uint8_t *)"STM32746G-DISCO board");
-  
-  LCD_UsrLog ((char *)"  State: Ethernet Initialization ...\n");
 }
 
 /**
