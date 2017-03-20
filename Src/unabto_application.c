@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <modules/fingerprint_acl/fp_acl_ae.h>
 #include <modules/fingerprint_acl/fp_acl_memory.h>
-#include <modules/fingerprint_acl/fp_acl_file.h>
+#include "fp_acl_flash.h"
 #include "stm32746g_discovery_lcd.h"
 #include "lcd_log.h"
 
@@ -31,6 +31,9 @@ struct fp_mem_persistence fp_file_;
 
 #define REQUIRES_GUEST FP_ACL_PERMISSION_NONE
 #define REQUIRES_OWNER FP_ACL_PERMISSION_ADMIN
+
+#define ADDR_FLASH_START ADDR_FLASH_SECTOR_3
+#define ADDR_FLASH_END   ADDR_FLASH_SECTOR_3 + 0x4000  // 16 Kbytes
 
 void debug_dump_acl() {
     void* it = db_.first();
@@ -61,8 +64,8 @@ void demo_init() {
         FP_ACL_PERMISSION_LOCAL_ACCESS |
         FP_ACL_PERMISSION_REMOTE_ACCESS;
 
-    if (fp_acl_file_init("persistence.bin", "tmp.bin", &fp_file_) != FP_ACL_DB_OK) {
-        NABTO_LOG_ERROR(("cannot load acl file"));
+    if (fp_acl_flash_init(ADDR_FLASH_START, ADDR_FLASH_END, &fp_file_) != FP_ACL_DB_OK) {
+        NABTO_LOG_ERROR(("cannot load acl from flash"));
         exit(1);
     }
     fp_mem_init(&db_, &default_settings, &fp_file_);

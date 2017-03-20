@@ -56,6 +56,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Src/ethernetif.c</locationURI>
 		</link>
 		<link>
+			<name>Application/User/fp_acl_flash.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/fp_acl_flash.c</locationURI>
+		</link>
+		<link>
 			<name>Application/User/log_adapter.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Src/log_adapter.c</locationURI>
@@ -609,11 +614,6 @@
 			<name>Middlewares/Nabto/modules/fingerprint_acl/fp_acl_ae.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/unabto/src/modules/fingerprint_acl/fp_acl_ae.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/Nabto/modules/fingerprint_acl/fp_acl_file.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/unabto/src/modules/fingerprint_acl/fp_acl_file.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/Nabto/modules/fingerprint_acl/fp_acl_memory.c</name>
